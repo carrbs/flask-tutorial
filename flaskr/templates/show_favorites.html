@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+{% block body %}
+  {% if session.logged_in %}
+     <form action="{{ url_for('add_favorite_website') }}" 
+          method=post 
+          class=add-entry>
+      <dl>
+        <dt>Title:
+        <dd><input type=text size=30 name=url_title>
+        <dt>URL:
+        <dd><input type=text size=30 name=url>
+        <dt>That image file:
+        <dd><input type=text size=30 name=image_url>
+        <dd><input type=submit value=Share>
+      </dl>
+    </form>
+    {% endif %}
+  <ul class=entries>
+  {% for fave in favorites %}
+        <li class="favorite-list-item" >
+        {% if fave.image_url %}
+            <img class=favorite-image-url src="{{ fave.image_url }}">
+        {% else %}
+            <img class=favorite-image-url
+                 src="http://www.clker.com/cliparts/w/z/a/T/H/r/black-and-white-globe-hi.png">
+        {% endif %}
+        <h2>
+            <a href="{{ fave.url }}">{{ fave.text }}</a>
+        </h2>
+        {% else %}
+     <li><em>Unbelievable.  No favorites yet.</em>
+  {% endfor %}
+  </ul>
+{% endblock %}
+
