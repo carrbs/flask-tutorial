@@ -82,6 +82,14 @@ def show_entries():
     return render_template('show_entries.html', entries=entries)
 
 
+@app.route('/favorites')
+def show_favorites():
+    db = get_db()
+    cur = db.execute('select url, text, image_url from favorite_websites order by id desc')
+    favorites = cur.fetchall()
+    return render_template('show_favorites.html', favorites=favorites)
+
+
 @app.route('/add', methods=['POST'])
 def add_entry():
     if not session.get('logged_in'):
@@ -92,6 +100,22 @@ def add_entry():
     db.commit()
     flash('New entry was successfully posted')
     return redirect(url_for('show_entries'))
+
+
+@app.route('/add-favorite', methods=['POST'])
+def add_favorite_website():
+    if not session.get('logged_in'):
+        abort(401)
+    db = get_db()
+    query = """
+    insert into favorite_websites (url, text, image_url)
+    values (?, ?, ?)
+    """
+    db.execute(query, [request.form['url'], request.form['url_title'],
+               request.form['image_url']])
+    db.commit()
+    flash('New favorite website was successfully posted')
+    return redirect(url_for('show_favorites'))
 
 
 @app.route('/login', methods=['GET', 'POST'])
