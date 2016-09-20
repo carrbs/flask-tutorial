@@ -38,11 +38,25 @@ def init_db():
     db.commit()
 
 
+def migrate_db():
+    db = get_db()
+    with app.open_resource('migrations.sql', mode='r') as f:
+        db.cursor().executescript(f.read())
+    db.commit()
+
+
 @app.cli.command('initdb')
 def initdb_command():
     """Initializes the db"""
     init_db()
     print 'Initialized the database.'
+
+
+@app.cli.command('migrate_db')
+def migrate_db_command():
+    """Run migrations in the migrations.py file"""
+    migrate_db()
+    print 'Migrated the database.'
 
 
 def get_db():
